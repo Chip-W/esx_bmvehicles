@@ -4,8 +4,8 @@ local Vehicles   = {}
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-TriggerEvent('esx_phone:registerNumber', 'cardealer', _U('dealer_customers'), false, false)
-TriggerEvent('esx_society:registerSociety', 'cardealer', _U('car_dealer'), 'society_cardealer', 'society_cardealer', 'society_cardealer', {type = 'private'})
+TriggerEvent('esx_phone:registerNumber', 'bmdealer', _U('dealer_customers'), false, false)
+TriggerEvent('esx_society:registerSociety', 'bmdealer', _U('car_dealer'), 'society_bmdealer', 'society_bmdealer', 'society_bmdealer', {type = 'private'})
 
 function RemoveOwnedVehicle(plate)
 	MySQL.Async.execute('DELETE FROM owned_vehicles WHERE plate = @plate', {
@@ -14,8 +14,8 @@ function RemoveOwnedVehicle(plate)
 end
 
 MySQL.ready(function()
-	Categories     = MySQL.Sync.fetchAll('SELECT * FROM vehicle_categories')
-	local vehicles = MySQL.Sync.fetchAll('SELECT * FROM vehicles')
+	Categories     = MySQL.Sync.fetchAll('SELECT * FROM bmvehicle_categories')
+	local vehicles = MySQL.Sync.fetchAll('SELECT * FROM bmvehicles')
 
 	for i=1, #vehicles, 1 do
 		local vehicle = vehicles[i]
@@ -31,12 +31,12 @@ MySQL.ready(function()
 	end
 
 	-- send information after db has loaded, making sure everyone gets vehicle information
-	TriggerClientEvent('esx_vehicleshop:sendCategories', -1, Categories)
-	TriggerClientEvent('esx_vehicleshop:sendVehicles', -1, Vehicles)
+	TriggerClientEvent('esx_bmvehicles:sendCategories', -1, Categories)
+	TriggerClientEvent('esx_bmvehicles:sendVehicles', -1, Vehicles)
 end)
 
-RegisterServerEvent('esx_vehicleshop:setVehicleOwned')
-AddEventHandler('esx_vehicleshop:setVehicleOwned', function (vehicleProps)
+RegisterServerEvent('esx_bmvehicles:setVehicleOwned')
+AddEventHandler('esx_bmvehicles:setVehicleOwned', function (vehicleProps)
 	local _source = source
 	local xPlayer = ESX.GetPlayerFromId(_source)
 
@@ -50,8 +50,8 @@ AddEventHandler('esx_vehicleshop:setVehicleOwned', function (vehicleProps)
 	end)
 end)
 
-RegisterServerEvent('esx_vehicleshop:setVehicleOwnedPlayerId')
-AddEventHandler('esx_vehicleshop:setVehicleOwnedPlayerId', function (playerId, vehicleProps)
+RegisterServerEvent('esx_bmvehicles:setVehicleOwnedPlayerId')
+AddEventHandler('esx_bmvehicles:setVehicleOwnedPlayerId', function (playerId, vehicleProps)
 	local xPlayer = ESX.GetPlayerFromId(playerId)
 
 	MySQL.Async.execute('INSERT INTO owned_vehicles (owner, plate, vehicle) VALUES (@owner, @plate, @vehicle)',
@@ -64,8 +64,8 @@ AddEventHandler('esx_vehicleshop:setVehicleOwnedPlayerId', function (playerId, v
 	end) 
 end)
 
-RegisterServerEvent('esx_vehicleshop:setVehicleOwnedSociety')
-AddEventHandler('esx_vehicleshop:setVehicleOwnedSociety', function (society, vehicleProps)
+RegisterServerEvent('esx_bmvehicles:setVehicleOwnedSociety')
+AddEventHandler('esx_bmvehicles:setVehicleOwnedSociety', function (society, vehicleProps)
 	local _source = source
 	local xPlayer = ESX.GetPlayerFromId(_source)
 
@@ -79,26 +79,26 @@ AddEventHandler('esx_vehicleshop:setVehicleOwnedSociety', function (society, veh
 	end)
 end)
 
-RegisterServerEvent('esx_vehicleshop:sellVehicle')
-AddEventHandler('esx_vehicleshop:sellVehicle', function (vehicle)
-	MySQL.Async.fetchAll('SELECT * FROM cardealer_vehicles WHERE vehicle = @vehicle LIMIT 1', {
+RegisterServerEvent('esx_bmvehicles:sellVehicle')
+AddEventHandler('esx_bmvehicles:sellVehicle', function (vehicle)
+	MySQL.Async.fetchAll('SELECT * FROM bmdealer_vehicles WHERE vehicle = @vehicle LIMIT 1', {
 		['@vehicle'] = vehicle
 	}, function (result)
 		local id = result[1].id
 
-		MySQL.Async.execute('DELETE FROM cardealer_vehicles WHERE id = @id', {
+		MySQL.Async.execute('DELETE FROM bmdealer_vehicles WHERE id = @id', {
 			['@id'] = id
 		})
 	end)
 end)
 
-RegisterServerEvent('esx_vehicleshop:addToList')
-AddEventHandler('esx_vehicleshop:addToList', function(target, model, plate)
+RegisterServerEvent('esx_bmvehicles:addToList')
+AddEventHandler('esx_bmvehicles:addToList', function(target, model, plate)
 	local xPlayer, xTarget = ESX.GetPlayerFromId(source), ESX.GetPlayerFromId(target)
 	local dateNow = os.date('%Y-%m-%d %H:%M')
 
-	if xPlayer.job.name ~= 'cardealer' then
-		print(('esx_vehicleshop: %s attempted to add a sold vehicle to list!'):format(xPlayer.identifier))
+	if xPlayer.job.name ~= 'bmdealer' then
+		print(('esx_bmvehicles: %s attempted to add a sold vehicle to list!'):format(xPlayer.identifier))
 		return
 	end
 
@@ -111,29 +111,29 @@ AddEventHandler('esx_vehicleshop:addToList', function(target, model, plate)
 	})
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:getSoldVehicles', function (source, cb)
+ESX.RegisterServerCallback('esx_bmvehicles:getSoldVehicles', function (source, cb)
 
 	MySQL.Async.fetchAll('SELECT * FROM vehicle_sold', {}, function(result)
 		cb(result)
 	end)
 end)
 
-RegisterServerEvent('esx_vehicleshop:rentVehicle')
-AddEventHandler('esx_vehicleshop:rentVehicle', function (vehicle, plate, playerName, basePrice, rentPrice, target)
+RegisterServerEvent('esx_bmvehicles:rentVehicle')
+AddEventHandler('esx_bmvehicles:rentVehicle', function (vehicle, plate, playerName, basePrice, rentPrice, target)
 	local xPlayer = ESX.GetPlayerFromId(target)
 
-	MySQL.Async.fetchAll('SELECT * FROM cardealer_vehicles WHERE vehicle = @vehicle LIMIT 1', {
+	MySQL.Async.fetchAll('SELECT * FROM bmdealer_vehicles WHERE vehicle = @vehicle LIMIT 1', {
 		['@vehicle'] = vehicle
 	}, function (result)
 		local id    = result[1].id
 		local price = result[1].price
 		local owner = xPlayer.identifier
 
-		MySQL.Async.execute('DELETE FROM cardealer_vehicles WHERE id = @id', {
+		MySQL.Async.execute('DELETE FROM bmdealer_vehicles WHERE id = @id', {
 			['@id'] = id
 		})
 
-		MySQL.Async.execute('INSERT INTO rented_vehicles (vehicle, plate, player_name, base_price, rent_price, owner) VALUES (@vehicle, @plate, @player_name, @base_price, @rent_price, @owner)',
+		MySQL.Async.execute('INSERT INTO bmrented_vehicles (vehicle, plate, player_name, base_price, rent_price, owner) VALUES (@vehicle, @plate, @player_name, @base_price, @rent_price, @owner)',
 		{
 			['@vehicle']     = vehicle,
 			['@plate']       = plate,
@@ -145,13 +145,13 @@ AddEventHandler('esx_vehicleshop:rentVehicle', function (vehicle, plate, playerN
 	end)
 end)
 
-RegisterServerEvent('esx_vehicleshop:getStockItem')
-AddEventHandler('esx_vehicleshop:getStockItem', function (itemName, count)
+RegisterServerEvent('esx_bmvehicles:getStockItem')
+AddEventHandler('esx_bmvehicles:getStockItem', function (itemName, count)
 	local _source = source
 	local xPlayer = ESX.GetPlayerFromId(_source)
 	local sourceItem = xPlayer.getInventoryItem(itemName)
 
-	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_cardealer', function (inventory)
+	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_bmdealer', function (inventory)
 		local item = inventory.getItem(itemName)
 
 		-- is there enough in the society?
@@ -171,12 +171,12 @@ AddEventHandler('esx_vehicleshop:getStockItem', function (itemName, count)
 	end)
 end)
 
-RegisterServerEvent('esx_vehicleshop:putStockItems')
-AddEventHandler('esx_vehicleshop:putStockItems', function (itemName, count)
+RegisterServerEvent('esx_bmvehicles:putStockItems')
+AddEventHandler('esx_bmvehicles:putStockItems', function (itemName, count)
 	local _source = source
 	local xPlayer = ESX.GetPlayerFromId(_source)
 
-	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_cardealer', function (inventory)
+	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_bmdealer', function (inventory)
 		local item = inventory.getItem(itemName)
 
 		if item.count >= 0 then
@@ -189,15 +189,15 @@ AddEventHandler('esx_vehicleshop:putStockItems', function (itemName, count)
 	end)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:getCategories', function (source, cb)
+ESX.RegisterServerCallback('esx_bmvehicles:getCategories', function (source, cb)
 	cb(Categories)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:getVehicles', function (source, cb)
+ESX.RegisterServerCallback('esx_bmvehicles:getVehicles', function (source, cb)
 	cb(Vehicles)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:buyVehicle', function (source, cb, vehicleModel)
+ESX.RegisterServerCallback('esx_bmvehicles:buyVehicle', function (source, cb, vehicleModel)
 	local xPlayer     = ESX.GetPlayerFromId(source)
 	local vehicleData = nil
 
@@ -216,7 +216,7 @@ ESX.RegisterServerCallback('esx_vehicleshop:buyVehicle', function (source, cb, v
 	end
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:buyVehicleSociety', function (source, cb, society, vehicleModel)
+ESX.RegisterServerCallback('esx_bmvehicles:buyVehicleSociety', function (source, cb, society, vehicleModel)
 	local vehicleData = nil
 
 	for i=1, #Vehicles, 1 do
@@ -230,7 +230,7 @@ ESX.RegisterServerCallback('esx_vehicleshop:buyVehicleSociety', function (source
 		if account.money >= vehicleData.price then
 			account.removeMoney(vehicleData.price)
 
-			MySQL.Async.execute('INSERT INTO cardealer_vehicles (vehicle, price) VALUES (@vehicle, @price)',
+			MySQL.Async.execute('INSERT INTO bmdealer_vehicles (vehicle, price) VALUES (@vehicle, @price)',
 			{
 				['@vehicle'] = vehicleData.model,
 				['@price']   = vehicleData.price
@@ -244,8 +244,8 @@ ESX.RegisterServerCallback('esx_vehicleshop:buyVehicleSociety', function (source
 	end)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:getCommercialVehicles', function (source, cb)
-	MySQL.Async.fetchAll('SELECT * FROM cardealer_vehicles ORDER BY vehicle ASC', {}, function (result)
+ESX.RegisterServerCallback('esx_bmvehicles:getCommercialVehicles', function (source, cb)
+	MySQL.Async.fetchAll('SELECT * FROM bmdealer_vehicles ORDER BY vehicle ASC', {}, function (result)
 		local vehicles = {}
 
 		for i=1, #result, 1 do
@@ -260,11 +260,11 @@ ESX.RegisterServerCallback('esx_vehicleshop:getCommercialVehicles', function (so
 end)
 
 
-RegisterServerEvent('esx_vehicleshop:returnProvider')
-AddEventHandler('esx_vehicleshop:returnProvider', function(vehicleModel)
+RegisterServerEvent('esx_bmvehicles:returnProvider')
+AddEventHandler('esx_bmvehicles:returnProvider', function(vehicleModel)
 	local _source = source
 
-	MySQL.Async.fetchAll('SELECT * FROM cardealer_vehicles WHERE vehicle = @vehicle LIMIT 1', {
+	MySQL.Async.fetchAll('SELECT * FROM bmdealer_vehicles WHERE vehicle = @vehicle LIMIT 1', {
 		['@vehicle'] = vehicleModel
 	}, function (result)
 
@@ -272,25 +272,25 @@ AddEventHandler('esx_vehicleshop:returnProvider', function(vehicleModel)
 			local id    = result[1].id
 			local price = ESX.Round(result[1].price * 0.75)
 
-			TriggerEvent('esx_addonaccount:getSharedAccount', 'society_cardealer', function(account)
+			TriggerEvent('esx_addonaccount:getSharedAccount', 'society_bmdealer', function(account)
 				account.addMoney(price)
 			end)
 
-			MySQL.Async.execute('DELETE FROM cardealer_vehicles WHERE id = @id', {
+			MySQL.Async.execute('DELETE FROM bmdealer_vehicles WHERE id = @id', {
 				['@id'] = id
 			})
 
 			TriggerClientEvent('esx:showNotification', _source, _U('vehicle_sold_for', vehicleModel, ESX.Math.GroupDigits(price)))
 		else
 			
-			print(('esx_vehicleshop: %s attempted selling an invalid vehicle!'):format(GetPlayerIdentifiers(_source)[1]))
+			print(('esx_bmvehicles: %s attempted selling an invalid vehicle!'):format(GetPlayerIdentifiers(_source)[1]))
 		end
 
 	end)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:getRentedVehicles', function (source, cb)
-	MySQL.Async.fetchAll('SELECT * FROM rented_vehicles ORDER BY player_name ASC', {}, function (result)
+ESX.RegisterServerCallback('esx_bmvehicles:getRentedVehicles', function (source, cb)
+	MySQL.Async.fetchAll('SELECT * FROM bmrented_vehicles ORDER BY player_name ASC', {}, function (result)
 		local vehicles = {}
 
 		for i=1, #result, 1 do
@@ -305,21 +305,21 @@ ESX.RegisterServerCallback('esx_vehicleshop:getRentedVehicles', function (source
 	end)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:giveBackVehicle', function (source, cb, plate)
-	MySQL.Async.fetchAll('SELECT * FROM rented_vehicles WHERE plate = @plate', {
+ESX.RegisterServerCallback('esx_bmvehicles:giveBackVehicle', function (source, cb, plate)
+	MySQL.Async.fetchAll('SELECT * FROM bmrented_vehicles WHERE plate = @plate', {
 		['@plate'] = plate
 	}, function (result)
 		if result[1] ~= nil then
 			local vehicle   = result[1].vehicle
 			local basePrice = result[1].base_price
 
-			MySQL.Async.execute('INSERT INTO cardealer_vehicles (vehicle, price) VALUES (@vehicle, @price)',
+			MySQL.Async.execute('INSERT INTO bmdealer_vehicles (vehicle, price) VALUES (@vehicle, @price)',
 			{
 				['@vehicle'] = vehicle,
 				['@price']   = basePrice
 			})
 
-			MySQL.Async.execute('DELETE FROM rented_vehicles WHERE plate = @plate', {
+			MySQL.Async.execute('DELETE FROM bmrented_vehicles WHERE plate = @plate', {
 				['@plate'] = plate
 			})
 
@@ -331,7 +331,7 @@ ESX.RegisterServerCallback('esx_vehicleshop:giveBackVehicle', function (source, 
 	end)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:resellVehicle', function (source, cb, plate, model)
+ESX.RegisterServerCallback('esx_bmvehicles:resellVehicle', function (source, cb, plate, model)
 	local resellPrice
 
 	-- calculate the resell price
@@ -342,7 +342,7 @@ ESX.RegisterServerCallback('esx_vehicleshop:resellVehicle', function (source, cb
 		end
 	end
 
-	MySQL.Async.fetchAll('SELECT * FROM rented_vehicles WHERE plate = @plate', {
+	MySQL.Async.fetchAll('SELECT * FROM bmrented_vehicles WHERE plate = @plate', {
 		['@plate'] = plate
 	}, function (result)
 		if result[1] then -- is it a rented vehicle?
@@ -365,11 +365,11 @@ ESX.RegisterServerCallback('esx_vehicleshop:resellVehicle', function (source, cb
 							RemoveOwnedVehicle(plate)
 							cb(true)
 						else
-							print(('esx_vehicleshop: %s attempted to sell an vehicle with plate mismatch!'):format(xPlayer.identifier))
+							print(('esx_bmvehicles: %s attempted to sell an vehicle with plate mismatch!'):format(xPlayer.identifier))
 							cb(false)
 						end
 					else
-						print(('esx_vehicleshop: %s attempted to sell an vehicle with model mismatch!'):format(xPlayer.identifier))
+						print(('esx_bmvehicles: %s attempted to sell an vehicle with model mismatch!'):format(xPlayer.identifier))
 						cb(false)
 					end
 
@@ -391,11 +391,11 @@ ESX.RegisterServerCallback('esx_vehicleshop:resellVehicle', function (source, cb
 										RemoveOwnedVehicle(plate)
 										cb(true)
 									else
-										print(('esx_vehicleshop: %s attempted to sell an vehicle with plate mismatch!'):format(xPlayer.identifier))
+										print(('esx_bmvehicles: %s attempted to sell an vehicle with plate mismatch!'):format(xPlayer.identifier))
 										cb(false)
 									end
 								else
-									print(('esx_vehicleshop: %s attempted to sell an vehicle with model mismatch!'):format(xPlayer.identifier))
+									print(('esx_bmvehicles: %s attempted to sell an vehicle with model mismatch!'):format(xPlayer.identifier))
 									cb(false)
 								end
 
@@ -415,20 +415,20 @@ ESX.RegisterServerCallback('esx_vehicleshop:resellVehicle', function (source, cb
 end)
 
 
-ESX.RegisterServerCallback('esx_vehicleshop:getStockItems', function (source, cb)
-	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_cardealer', function(inventory)
+ESX.RegisterServerCallback('esx_bmvehicles:getStockItems', function (source, cb)
+	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_bmdealer', function(inventory)
 		cb(inventory.items)
 	end)
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:getPlayerInventory', function (source, cb)
+ESX.RegisterServerCallback('esx_bmvehicles:getPlayerInventory', function (source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local items   = xPlayer.inventory
 
 	cb({ items = items })
 end)
 
-ESX.RegisterServerCallback('esx_vehicleshop:isPlateTaken', function (source, cb, plate)
+ESX.RegisterServerCallback('esx_bmvehicles:isPlateTaken', function (source, cb, plate)
 	MySQL.Async.fetchAll('SELECT * FROM owned_vehicles WHERE @plate = plate', {
 		['@plate'] = plate
 	}, function (result)
@@ -437,7 +437,7 @@ ESX.RegisterServerCallback('esx_vehicleshop:isPlateTaken', function (source, cb,
 end)
 
 function PayRent(d, h, m)
-	MySQL.Async.fetchAll('SELECT * FROM rented_vehicles', {}, function (result)
+	MySQL.Async.fetchAll('SELECT * FROM bmrented_vehicles', {}, function (result)
 		for i=1, #result, 1 do
 			local xPlayer = ESX.GetPlayerFromIdentifier(result[i].owner)
 
@@ -453,7 +453,7 @@ function PayRent(d, h, m)
 				})
 			end
 
-			TriggerEvent('esx_addonaccount:getSharedAccount', 'society_cardealer', function(account)
+			TriggerEvent('esx_addonaccount:getSharedAccount', 'society_bmdealer', function(account)
 				account.addMoney(result[i].rent_price)
 			end)
 		end
