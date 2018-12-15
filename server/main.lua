@@ -110,7 +110,7 @@ AddEventHandler('esx_bmvehicles:addToList', function(target, model, plate)
 		['@date'] = dateNow
 	})
 end)
-
+	-- Edits by Chip W
 ESX.RegisterServerCallback('esx_bmvehicles:getSoldVehicles', function (source, cb)
 
 	MySQL.Async.fetchAll('SELECT * FROM vehicle_sold', {}, function(result)
@@ -288,7 +288,7 @@ AddEventHandler('esx_bmvehicles:returnProvider', function(vehicleModel)
 
 	end)
 end)
-
+	-- Edits by Chip W
 ESX.RegisterServerCallback('esx_bmvehicles:getRentedVehicles', function (source, cb)
 	MySQL.Async.fetchAll('SELECT * FROM bmrented_vehicles ORDER BY player_name ASC', {}, function (result)
 		local vehicles = {}
@@ -427,7 +427,7 @@ ESX.RegisterServerCallback('esx_bmvehicles:getPlayerInventory', function (source
 
 	cb({ items = items })
 end)
-
+	-- Edits by Chip W
 ESX.RegisterServerCallback('esx_bmvehicles:isPlateTaken', function (source, cb, plate)
 	MySQL.Async.fetchAll('SELECT * FROM owned_vehicles WHERE @plate = plate', {
 		['@plate'] = plate

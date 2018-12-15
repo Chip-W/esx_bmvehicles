@@ -187,7 +187,7 @@ function OpenShopMenu()
 			options = options
 		})
 	end
-
+	-- Edits by Chip W
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'vehicle_shop',
 	{
 		title    = _U('car_dealer'),
@@ -485,7 +485,7 @@ function OpenResellerMenu()
 				local model        = CurrentVehicleData.model
 				vehicleProps.plate = newPlate
 				SetVehicleNumberPlateText(LastVehicles[#LastVehicles], newPlate)
-
+					-- Edits by Chip W
 				TriggerServerEvent('esx_bmvehicles:sellVehicle', model)
 				TriggerServerEvent('esx_bmvehicles:addToList', GetPlayerServerId(closestPlayer), model, newPlate)
 
@@ -798,7 +798,7 @@ end)
 
 AddEventHandler('esx_bmvehicles:hasEnteredMarker', function (zone)
 	if zone == 'ShopEntering' then
-
+			-- Edits by Chip W
 		if Config.EnablePlayerManagement then
 			if ESX.PlayerData.job ~= nil and ESX.PlayerData.job.name == 'bmdealer' then
 				CurrentAction     = 'reseller_menu'
