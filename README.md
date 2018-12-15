@@ -1,8 +1,12 @@
-# esx_bmvehicles
+# Black Market Vehicles - esx_bmvehicles
 
 Black Market vehicles is just another vehicle shop that strictly sells weaponized vehicles.  There is no phone number to call or map blip to see.  This must be found by word of mouth.
 
-You can find the shop here:
+All language files except English was removed because I don't want to translate them.  If you would like to translate and create a PR, you are welcome to do so.  Use the language files from esx_vehicleshop to get a major head start.
+
+This resource includes cw.lua.  This is a teleport script from the shop entrance to the shop interior.  You can be on foot or in a vehicle.  This teleport script is NOT originally created by me, I've only edited to my needs.  However, I don't remember where I found it, so I'm unable to give proper credit.
+
+You can find the shop at LSIA here:
 ![Shop Location](https://media.discordapp.net/attachments/455425743858434051/523391543617388554/f276af5ae096967b688aaaa2800a9e1e.png)
 
 You will be teleported into the Smuggler's Run hangar:
@@ -11,7 +15,7 @@ You will be teleported into the Smuggler's Run hangar:
 ## Requirements
 
 * Auto mode (everyone can buy vehicles from the dealer)
-  * No need to download another resource
+  * [fivem-ipl](https://github.com/ESX-PUBLIC/fivem-ipl)
 
 * Player management (the car dealer job): billing, boss actions and more!
   * [esx_society](https://github.com/ESX-Org/esx_society)
@@ -19,41 +23,31 @@ You will be teleported into the Smuggler's Run hangar:
   * [esx_addonaccount](https://github.com/ESX-Org/esx_addonaccount)
   * [esx_addoninventory](https://github.com/ESX-Org/esx_addoninventory)
   * [cron](https://github.com/ESX-Org/cron)
+  * [fivem-ipl](https://github.com/ESX-PUBLIC/fivem-ipl)
+  
 
 ## Download & Installation
 
-### Using [fvm](https://github.com/qlaffont/fvm-installer)
-```
-fvm install --save --folder=esx esx-org/esx_vehicleshop
-```
-
-### Using Git
-```
-cd resources
-git clone https://github.com/ESX-Org/esx_vehicleshop [esx]/esx_vehicleshop
-```
-
-### Manually
-- Download https://github.com/ESX-Org/esx_vehicleshop/archive/master.zip
+- Download https://github.com/Chip-W/esx_bmvehicles/archive/master.zip
 - Put it in the `[esx]` directory
 
 ## Installation
-- Import `esx_vehicleshop.sql` in your database
+- Import `esx_bmvehicles.sql` in your database
 - Add this in your `server.cfg`:
 
 ```
-start esx_vehicleshop
+start esx_bmvehicles
 ```
 - If you want player management you have to set `Config.EnablePlayerManagement` to `true` in `config.lua`
 
 # Legal
 ### License
-esx_vehicleshop - vehicle shop for ESX
+esx_bmvehicles - Black market vehicle shop for ESX
 
 Copyright (C) 2015-2018 Jérémie N'gadi
+Edits by Chip Wickings
 
-This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
-
-This program Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
-
-You should have received a copy Of the GNU General Public License along with this program. If Not, see http://www.gnu.org/licenses/.
+* This resource is supplied void of any guarentee or warranty
+* Users of this script may make any changes they want
+* Users of this script may share with anyone they wish
+* Users of this script are prohibited from posting this edit on the FiveM forums (fuck them)
