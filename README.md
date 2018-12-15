@@ -2,6 +2,8 @@
 
 Black Market vehicles is just another vehicle shop that strictly sells weaponized vehicles.  There is no phone number to call or map blip to see.  This must be found by word of mouth.
 
+Prices are just random numbers I put in.  Change to your liking.
+
 All language files except English was removed because I don't want to translate them.  If you would like to translate and create a PR, you are welcome to do so.  Use the language files from esx_vehicleshop to get a major head start.
 
 This resource includes cw.lua.  This is a teleport script from the shop entrance to the shop interior.  You can be on foot or in a vehicle.  This teleport script is NOT originally created by me, I've only edited to my needs.  However, I don't remember where I found it, so I'm unable to give proper credit.
@@ -45,6 +47,7 @@ start esx_bmvehicles
 esx_bmvehicles - Black market vehicle shop for ESX
 
 Copyright (C) 2015-2018 Jérémie N'gadi
+
 Edits by Chip Wickings
 
 * This resource is supplied void of any guarentee or warranty
