@@ -53,4 +53,4 @@ Edits by Chip Wickings
 * This resource is supplied void of any guarentee or warranty
 * Users of this script may make any changes they want
 * Users of this script may share with anyone they wish
-* Users of this script may NOT upload to FiveM and claim they made the edits
+* Users of this script may NOT upload this version to anywhere
