@@ -50,4 +50,4 @@ Edits by Chip Wickings
 * This resource is supplied void of any guarentee or warranty
 * Users of this script may make any changes they want
 * Users of this script may share with anyone they wish
-* Users of this script are prohibited from posting this edit on the FiveM forums (fuck them)
+* Users of this script may NOT upload to FiveM and claim they made the edits
