@@ -46,8 +46,6 @@ start esx_bmvehicles
 ### License
 esx_bmvehicles - Black market vehicle shop for ESX
 
-Copyright (C) 2015-2018 Jérémie N'gadi
-
 Edits by Chip Wickings
 
 * This resource is supplied void of any guarentee or warranty
